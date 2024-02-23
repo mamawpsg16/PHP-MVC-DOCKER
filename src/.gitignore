@@ -1,0 +1,26 @@
+# Ignore compiled binaries and executables
+*.exe
+*.out
+*.o
+
+# Ignore dependencies
+/node_modules
+/vendor
+
+# Ignore logs and databases
+*.log
+*.sqlite
+
+# Ignore environment-specific files
+.env
+.env.local
+.env.*.local
+
+# Ignore user-specific files
+.vscode/
+.DS_Store
+
+# Ignore temporary files and directories
+/tmp
+*.tmp
+/storage
