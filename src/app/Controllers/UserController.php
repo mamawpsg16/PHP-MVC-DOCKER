@@ -1,9 +1,12 @@
 <?php
 namespace App\Controllers;
-class UserController extends Controller
+
+use App\Controllers\ViewController;
+
+class UserController
 {
     public function index()
     {
-        echo Controller::make('User.php');
+        return ViewController::make('User.php');
     }
 }

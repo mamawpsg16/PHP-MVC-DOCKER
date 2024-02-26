@@ -24,3 +24,5 @@
 /tmp
 *.tmp
 /storage
+
+.env

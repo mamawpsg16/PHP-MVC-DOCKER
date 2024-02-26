@@ -1,49 +1,33 @@
 <?php
 namespace App\Controllers;
 
-use PDO;
-use App\Controllers\Controller;
+use App\Controllers\AppController;
+use App\Controllers\ViewController;
+use App\Services\InvoiceService;
 
 class HomeController
 {
+
     public function index()
     {
-        $pdo = new PDO("mysql:host=db;dbname=larashop", 'user', 'password',[
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
-      
-        $name = 'Alibaba Charger';
-        $description = null;
-        try {
-            // Some code that may throw an exception
-            // $data = $pdo->prepare("INSERT INTO products (`name`, `description`) VALUES (:name, :description)");
-            // $data->bindParam(':name', $name);
-            // $data->bindParam(':description', $description);
-            // $data->execute();
-            // $query = 'SELECT * FROM products';
-            // $result = $pdo->query($query);
-            // var_dump($result->fetchAll());
+        // $db = AppController::db();
+        // try {
+        //     $db->beginTransaction();
 
-            // $search = 'name';
-            // $sql = "SELECT * FROM users WHERE $search = :email";
-            // $stmt = $pdo->query($sql);
-            // $results = $stmt->fetchAll();
-            // var_dump($results);
-        } catch (\PDOException $e) {
-            // Handle the exception, you can access the error code using $e->getCode()
-            $errorCode = $e->getCode();
-            echo "Error Code: $errorCode\n";
-            echo "Error Message: " . $e->getMessage() . "\n";
-        }
-        // $_SESSION['COUNT'] += 1;
-        // setcookie("USERNAME",'mamawpsg16', time() + 10);
-        echo (string)Controller::make('Home');
+        //     $db->commit();
+        // } catch (\Throwable $th) {
+        //     if($db->inTransaction()){
+        //         $db->rollBack();
+        //     }
+        //     //throw $th;
+        // }
+
+
+        return ViewController::make('Home');
     }
 
     public function upload(){
-        echo Controller::make('Upload');
+        return ViewController::make('Upload');
     }
 
     public function download(){
@@ -60,12 +44,28 @@ class HomeController
             echo "Image not found";
         }
     }
-    public function storeUpload(){
+    public function store(){
         $file_path = STORAGE.$_FILES['image']['name'];
+        var_dump($_FILES, $file_path, ROOT);
         move_uploaded_file($_FILES['image']['tmp_name'], $file_path);
-
-        header("Location: /");
+        // $this->uploadData($file_path);
+        // header("Location: /");
         
-        exit;
+        // exit;
+    }
+
+    public function uploadData($file){
+
+        $details = [];
+        $fields = ['id', 'name', 'country', 'address', 'company', 'date', 'salary'];
+        if (($handle = fopen($file, "r")) !== FALSE) {
+            while (($data = fgetcsv($handle, 500, ",")) !== FALSE) {
+                $row = array_combine($fields, $data);
+                array_push($details, $row);
+            }
+            fclose($handle);
+        }
+        $new_details = array_slice($details,1);
+        return ['products' => $new_details];
     }
 }

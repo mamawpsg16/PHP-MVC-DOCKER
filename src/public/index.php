@@ -5,30 +5,33 @@ namespace App;
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-use App\Controllers\Controller;
+use Dotenv\Dotenv;
+use App\Models\Config;
+use App\Controllers\AppController;
 use App\Controllers\HomeController;
-use App\Controllers\UserController;
+use App\Controllers\ProductController;
 use App\Controllers\ExerciseController;
-use App\Exceptions\RouteNotFoundException;
 
 session_start();
 
 // Include Composer autoloader
 require_once dirname(__DIR__).DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'constants.php';
 require_once __DIR__ . '/../vendor/autoload.php';
+$dotenv = Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
 
-try{
+$router = new Router();
 
-    $router = new Router();
-    
-    $router->get('/',[HomeController::class, 'index'])
-            ->get('/download',[HomeController::class, 'download'])
-            ->get('/upload',[HomeController::class, 'upload'])
-            ->post('/upload',[HomeController::class, 'storeUpload'])
-            ->get('/transactions',[ExerciseController::class, 'index'])
-    ->resolve($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+$router->get('/',[HomeController::class, 'index'])
+        ->get('/download',[HomeController::class, 'download'])
+        ->get('/upload',[HomeController::class, 'upload'])
+        ->get('/transactions',[ExerciseController::class, 'index'])
+        ->get('/products',[ProductController::class, 'index'])
+        ->get('/product/create',[ProductController::class, 'create'])
+        ->post('/product',[ProductController::class, 'store'])
+        ->get('/product/{id}',[ProductController::class, 'show'])
+        ->post('/product/delete',[ProductController::class, 'destroy'])
+        ->post('/upload',[HomeController::class, 'store']);
 
-}catch(RouteNotFoundException $e){
-    http_response_code(404);
-    echo Controller::make("Errors/404");
-} 
+(new AppController($router,['uri' => $_SERVER['REQUEST_URI'], 'method' => $_SERVER['REQUEST_METHOD']], new Config($_ENV)))->run();
+

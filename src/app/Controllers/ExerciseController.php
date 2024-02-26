@@ -1,9 +1,11 @@
 <?php
 namespace App\Controllers;
 
+use App\Controllers\ViewController;
+
 class ExerciseController{
     public function index(){
-        echo Controller::make('Transaction',$this->details());
+        return ViewController::make('Transaction',$this->details());
     }
     public function details(){
         $details = [];

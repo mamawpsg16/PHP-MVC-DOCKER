@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Exceptions\ViewNotFoundException;
 
-class Controller
+class ViewController
 {
     public function __construct(protected string $view, protected array $data = []){
 
